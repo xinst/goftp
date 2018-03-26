@@ -246,9 +246,17 @@ func (pconn *persistentConn) logIn() error {
 		}
 	}
 
+	if !positiveCompletionReply(code) {
+		return ftpError{code: code, msg: msg}
+	}
+
 	code, msg, err = pconn.sendCommand("PBSZ 0")
 	if err != nil {
 		return err
+	}
+
+	if !positiveCompletionReply(code) {
+		return ftpError{code: code, msg: msg}
 	}
 
 	code, msg, err = pconn.sendCommand("PROT P")

@@ -175,9 +175,13 @@ func (c *Client) Stat(path string) (os.FileInfo, error) {
 				return nil, err
 			}
 
-			if len(lines) != 1 {
-				return nil, ftpError{err: fmt.Errorf("unexpected LIST response: %v", lines)}
-			}
+			//if len(lines) != 1 {
+			//	return nil, ftpError{err: fmt.Errorf("unexpected LIST response: %v", lines)}
+			//}
+			// The last file listing entry has a EOL even if there's only one file being listed.
+			if len(lines) != 2 || lines[1] != "" {
+ 				return nil, ftpError{err: fmt.Errorf("unexpected LIST response: %v", lines)}
+ 			}
 
 			return parseLIST(lines[0], c.config.ServerLocation, false)
 		}
